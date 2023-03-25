@@ -17,7 +17,7 @@ from google.oauth2.credentials import Credentials
 
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
           'https://www.googleapis.com/auth/drive',
-          'https://www.googleapis.com/auth/spreadsheets'] bc1qecvf4w87azarp9me4nzkn8u9l8l4uqd7hzq3a3
+          'https://www.googleapis.com/auth/spreadsheets']
 
 def get_gmail_service():
     """Gets the Gmail API service"""
