@@ -108,14 +108,7 @@ def extract_bgn_numbers_and_dates(text):
     # Find all dates in the text
     date_matches = re.findall(date_pattern, text)
 
-    # Convert date strings to datetime objects
-    #dates = []
-    #for date_str in date_matches:
-        #  date = datetime.strptime(date_str, '%d.%m.%Y %H:%M:%S')
-        # my_datetime_str = date.strftime("%Y-%m-%d %H:%M:%S")
-        #bgn_matches.append(date_str)
-
-    # Return a tuple of the BGN numbers and dates
+    # Return a tuple of th BGN numbers and dates
     if  (len(date_matches) and len(bgn_matches)):
         return [date_matches[0], bgn_matches[0]]
     else:
@@ -162,7 +155,7 @@ def search_messages(search_query):
                 messages.extend(response['messages'])
         
         data = [
-            ['Name', 'Age', 'TIme']
+            ['Data', 'Sum']
         ]
 
         # Print the subject of each email
