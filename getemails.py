@@ -75,29 +75,6 @@ def extract_bgn_numbers_and_dates(text):
     # Return a tuple of the BGN numbers and dates
     return bgn_matches, dates
 
-def get_gmail_service():
-    """Gets the Gmail API service"""
-    creds = None
-    # The file token.pickle stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first time
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
-            creds = pickle.load(token)
-    # If there are no (valid) credentials available, let the user log in
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open('token.pickle', 'wb') as token:
-            pickle.dump(creds, token)
-
-    # Build the Gmail API service
-    service = build('gmail', 'v1', credentials=creds)
-    return service
 
 
 def search_messages(service, search_query):
@@ -123,9 +100,6 @@ def search_messages(service, search_query):
 if __name__ == '__main__':
     # Get the Gmail API service
     service = get_gmail_service()
-
-    # Search for messages with subject "CC NOTIFICATION"
-    messages = search_messages(service, "CC NOTIFICATION")
 
     # Print the subject of each email
 
