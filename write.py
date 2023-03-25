@@ -40,7 +40,7 @@ def get_gmail_service():
             pickle.dump(creds, token)
 
     # Build the Gmail API service
-    service = build('sheets', 'v1', credentials=creds)
+    service = build('sheets', 'v4', credentials=creds)
     return service
 
 
