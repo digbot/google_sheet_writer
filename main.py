@@ -7,12 +7,12 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from datetime import datetime, time, timedelta
-import re
-from datetime import datetime
 import google.auth
 from google.oauth2.credentials import Credentials
-import json
 import gspread
+from helpers.commonHelper import extract_bgn_numbers_and_dates
+from helpers.storeHelper import store_sheet_id, get_sheet_id
+
  
 # Define the scopes that the application will need
 
@@ -41,20 +41,6 @@ def get_gmail_cred():
             pickle.dump(creds, token)
     return creds
 
-def store_sheet_id(sheet_id):
-    with open('sheet_id.json', 'w') as f:
-        json.dump({'sheet_id': sheet_id}, f)
-
-def get_sheet_id():
-    try:
-        with open('sheet_id.json') as f:
-            data = json.load(f)
-            sheet_id = data['sheet_id']
-            return sheet_id
-    except (FileNotFoundError, json.JSONDecodeError):
-        print("Error: Could not open sheet_id.json")
-        return False
-
 def get_sheet(sheet_id, sheets_service, client):
     if sheet_id:
         sheet = client.open_by_key(sheet_id)
@@ -70,49 +56,6 @@ def get_sheet(sheet_id, sheets_service, client):
         print(f'Created new sheet with title "{sheet_title}" and ID "{sheet_id}"')
         store_sheet_id(sheet_id)
     return sheet
-
-def extract_bgn_numbers_and_dates(text):
-    # Regular expression to match BGN numbers
-    bgn_pattern = r"\b\d+(?:\.\d{1,2})?\s*BGN\b"
-    
-    # Regular expression to match dates
-    date_pattern = r"\b\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2}:\d{2}\b"
-
-    # Find all BGN numbers in the text
-    bgn_matches = re.findall(bgn_pattern, text)
-    
-    # Find all dates in the text
-    date_matches = re.findall(date_pattern, text)
-
-    # Convert date strings to datetime objects
-    dates = []
-    for date_str in date_matches:
-        date = datetime.strptime(date_str, '%d.%m.%Y %H:%M:%S')
-        dates.append(date)
-
-    # Return a tuple of the BGN numbers and dates
-    return bgn_matches, dates
-
-
-def extract_bgn_numbers_and_dates(text):
-    result = []
-    # Regular expression to match BGN numbers
-    bgn_pattern = r"\b\d+(?:\.\d{1,2})?\s*BGN\b"
-    
-    # Regular expression to match dates
-    date_pattern = r"\b\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2}:\d{2}\b"
-
-    # Find all BGN numbers in the text
-    bgn_matches = re.findall(bgn_pattern, text)
-    
-    # Find all dates in the text
-    date_matches = re.findall(date_pattern, text)
-
-    # Return a tuple of th BGN numbers and dates
-    if  (len(date_matches) and len(bgn_matches)):
-        return [date_matches[0], bgn_matches[0]]
-    else:
-        return ['','']
 
 def get_gmail_service():
     """Gets the Gmail API service"""
@@ -162,8 +105,10 @@ def search_messages(search_query):
         for message in messages:
             msg = service.users().messages().get(userId='me', id=message['id']).execute()
             headers = msg['payload']['headers']
-            data.append(extract_bgn_numbers_and_dates(msg['snippet']))
-            print(msg['snippet'])
+            line = extract_bgn_numbers_and_dates(msg['snippet'])
+            if line: 
+                data.append(line)
+                print(msg['snippet'])
         return data
 
     except HttpError as error:

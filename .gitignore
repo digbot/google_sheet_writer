@@ -1,3 +1,4 @@
 sheet_id.json
 credentials.json
 token.pickle
+*.pyc
