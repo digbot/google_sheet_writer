@@ -13,6 +13,7 @@ import gspread
 from helpers.commonHelper import extract_bgn_numbers_and_dates
 from helpers.storeHelper import get_sheet_id, append_to_json_file, get_processed_ids
 from service.sheet.sheetService import get_first_empty_row, get_sheet
+from service.gmail.gmailService import get_gmail_service
 
 # Define the scopes that the application will need
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
@@ -40,46 +41,27 @@ def get_gmail_cred():
             pickle.dump(creds, token)
     return creds
 
-def get_gmail_service():
-    """Gets the Gmail API service"""
-    creds = None
-    # The file token.pickle stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first time
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
-            creds = pickle.load(token)
-    # If there are no (valid) credentials available, let the user log in
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open('token.pickle', 'wb') as token:
-            pickle.dump(creds, token)
+def fetch_message(service, search_query):
+    query = "subject:" + search_query
+    response = service.users().messages().list(userId='me', q=query).execute()
+    messages = []
+    if 'messages' in response:
+        messages.extend(response['messages'])
 
-    # Build the Gmail API service
-    service = build('gmail', 'v1', credentials=creds)
-    return service
+    while 'nextPageToken' in response:
+        page_token = response['nextPageToken']
+        response = service.users().messages().list(userId='me',q=query, pageToken=page_token).execute()
+        if 'messages' in response:
+            messages.extend(response['messages'])
+    return messages
 
 def search_messages(search_query, processed_ids):
     service = get_gmail_service()
     """Searches for messages using the Gmail API and returns a list of message IDs"""
     try:
-        query = "subject:" + search_query
-        response = service.users().messages().list(userId='me', q=query).execute()
-        messages = []
-        if 'messages' in response:
-            messages.extend(response['messages'])
 
-        while 'nextPageToken' in response:
-            page_token = response['nextPageToken']
-            response = service.users().messages().list(userId='me',q=query, pageToken=page_token).execute()
-            if 'messages' in response:
-                messages.extend(response['messages'])
-        
+        messages = fetch_message(service, search_query)
+
         data = [
             ['Data', 'Sum']
         ]
@@ -95,8 +77,13 @@ def search_messages(search_query, processed_ids):
             is_msg_processed = msg_id not in processed_ids
             if line and is_msg_processed:
                 data.append(line)
-                print(msg['snippet'])
-            append_to_json_file(msg_ids)
+                print('Added: ' + msg['snippet'])
+            else:
+                print('Bypass: ' + msg['snippet'])                 
+        
+        
+        append_to_json_file(msg_ids)
+        
         return data
 
     except HttpError as error:
@@ -118,11 +105,6 @@ if __name__ == '__main__':
 
     first_empty_row = get_first_empty_row(sheets_service, sheet_id, "Sheet 1")
     print(f'{first_empty_row} first_empty_row')
-
-    # select a worksheet within the spreadsheet
-    worksheet_list = sheet.worksheets()
-    for worksheet in worksheet_list:
-        worksheet.clear()
 
     # Search for messages with subject "CC NOTIFICATION"
     data = search_messages("CC NOTIFICATION", processed_ids)

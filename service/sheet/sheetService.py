@@ -41,3 +41,8 @@ def get_first_empty_row(service, spreadsheet_id, sheet_name):
             return row_num
         row_num += 1
     return row_num
+
+def clear_worksheet(sheet):
+    worksheet_list = sheet.worksheets()
+    for worksheet in worksheet_list:
+        worksheet.clear()
