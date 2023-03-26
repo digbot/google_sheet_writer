@@ -11,11 +11,10 @@ import google.auth
 from google.oauth2.credentials import Credentials
 import gspread
 from helpers.commonHelper import extract_bgn_numbers_and_dates
-from helpers.storeHelper import store_sheet_id, get_sheet_id
+from helpers.storeHelper import get_sheet_id, append_to_json_file, get_processed_ids
+from service.sheet.sheetService import get_first_empty_row, get_sheet
 
- 
 # Define the scopes that the application will need
-
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
           'https://www.googleapis.com/auth/drive',
           'https://www.googleapis.com/auth/spreadsheets']
@@ -41,22 +40,6 @@ def get_gmail_cred():
             pickle.dump(creds, token)
     return creds
 
-def get_sheet(sheet_id, sheets_service, client):
-    if sheet_id:
-        sheet = client.open_by_key(sheet_id)
-    else:
-        sheet_title = 'Email content'
-        sheet = sheets_service.spreadsheets().create(
-            body={
-                'properties': {'title': sheet_title},
-                'sheets': [{'properties': {'title': 'Sheet 1'}}],
-            }
-        ).execute()
-        sheet_id = sheet['spreadsheetId']
-        print(f'Created new sheet with title "{sheet_title}" and ID "{sheet_id}"')
-        store_sheet_id(sheet_id)
-    return sheet
-
 def get_gmail_service():
     """Gets the Gmail API service"""
     creds = None
@@ -81,7 +64,7 @@ def get_gmail_service():
     service = build('gmail', 'v1', credentials=creds)
     return service
 
-def search_messages(search_query):
+def search_messages(search_query, processed_ids):
     service = get_gmail_service()
     """Searches for messages using the Gmail API and returns a list of message IDs"""
     try:
@@ -102,13 +85,18 @@ def search_messages(search_query):
         ]
 
         # Print the subject of each email
+        msg_ids = []
         for message in messages:
             msg = service.users().messages().get(userId='me', id=message['id']).execute()
-            headers = msg['payload']['headers']
+            #headers = msg['payload']['headers']
+            msg_id = msg['id']
+            msg_ids.append(msg_id)
             line = extract_bgn_numbers_and_dates(msg['snippet'])
-            if line: 
+            is_msg_processed = msg_id not in processed_ids
+            if line and is_msg_processed:
                 data.append(line)
                 print(msg['snippet'])
+            append_to_json_file(msg_ids)
         return data
 
     except HttpError as error:
@@ -124,15 +112,20 @@ if __name__ == '__main__':
 
     sheet_id = get_sheet_id()
 
-    sheet = get_sheet(sheet_id, sheets_service, client)
+    processed_ids = get_processed_ids()
     
+    sheet = get_sheet(sheet_id, sheets_service, client)
+
+    first_empty_row = get_first_empty_row(sheets_service, sheet_id, "Sheet 1")
+    print(f'{first_empty_row} first_empty_row')
+
     # select a worksheet within the spreadsheet
     worksheet_list = sheet.worksheets()
     for worksheet in worksheet_list:
         worksheet.clear()
 
     # Search for messages with subject "CC NOTIFICATION"
-    data = search_messages("CC NOTIFICATION")
+    data = search_messages("CC NOTIFICATION", processed_ids)
                 
     range_name = 'Sheet 1!A1:C400'
     value_input_option = 'USER_ENTERED'
