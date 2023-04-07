@@ -1,11 +1,10 @@
 
 import re
-
 def extract_bgn_numbers_and_dates(text):
-    result = []
     # Regular expression to match BGN numbers
-    bgn_pattern = r"\b\d+(?:\.\d{1,2})?\s*BGN\b"
-    
+    #bgn_pattern = r"\b\d+(?:\.\d{1,2})?\s*BGN\b"
+    bgn_pattern = r"\b(\d+(?:\.\d{1,2})?)\s*BGN\b"
+
     # Regular expression to match dates
     date_pattern = r"\b\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2}:\d{2}\b"
 
