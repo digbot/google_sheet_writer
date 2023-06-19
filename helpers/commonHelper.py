@@ -1,5 +1,20 @@
 
 import re
+from datetime import datetime
+
+def negativeNumber(x):
+    neg = x * (-1)
+    return neg
+
+def convert_to_date(date_time_str):
+    # Convert the string to datetime object
+    date_time_obj = datetime.strptime(date_time_str, '%d.%m.%Y %H:%M:%S')
+    # Extract only the date portion
+    date_obj = date_time_obj.date()
+    # Format the date as a string
+    date_str = date_obj.strftime('%d.%m.%Y')
+    return date_str
+
 def extract_bgn_numbers_and_dates(text):
     # Regular expression to match BGN numbers
     #bgn_pattern = r"\b\d+(?:\.\d{1,2})?\s*BGN\b"
@@ -16,6 +31,6 @@ def extract_bgn_numbers_and_dates(text):
 
     # Return a tuple of th BGN numbers and dates
     if  (len(date_matches) and len(bgn_matches)):
-        return [date_matches[0], bgn_matches[0]]
+        return [convert_to_date(date_matches[0]), bgn_matches[0] ]
     else:
         return False

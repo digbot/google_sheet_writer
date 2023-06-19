@@ -3,14 +3,13 @@ from googleapiclient.errors import HttpError
 import gspread
 from helpers.commonHelper import extract_bgn_numbers_and_dates
 from helpers.storeHelper import get_sheet_id, append_to_json_file, get_processed_ids
-from service.sheet.sheetService import get_first_empty_row, get_sheet
+from service.sheet.sheetService import get_first_empty_row, get_sheet, clear_worksheet
 from service.gmail.gmailService import get_gmail_service, get_gmail_cred
 
 # Define the scopes that the application will need
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
           'https://www.googleapis.com/auth/drive',
           'https://www.googleapis.com/auth/spreadsheets']
-
 
 def fetch_message(service, search_query):
     query = "subject:" + search_query
@@ -54,7 +53,9 @@ def search_messages(search_query, processed_ids):
         
         
         append_to_json_file(msg_ids)
-        
+
+        data.reverse()
+         
         return data
 
     except HttpError as error:
@@ -74,13 +75,15 @@ if __name__ == '__main__':
     
     sheet = get_sheet(sheet_id, sheets_service, client)
 
+    clear_worksheet(sheet)
+
     first_empty_row = get_first_empty_row(sheets_service, sheet_id, "Sheet 1")
     print(f'{first_empty_row} first_empty_row')
 
     # Search for messages with subject "CC NOTIFICATION"
     data = search_messages("CC NOTIFICATION", processed_ids)
-                
-    range_name = 'Sheet 1!A1:C400'
+
+    range_name = 'Sheet 1!A1:C900'
     value_input_option = 'USER_ENTERED'
     body = {
         'range': range_name,
