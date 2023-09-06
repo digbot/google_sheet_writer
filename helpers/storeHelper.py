@@ -4,10 +4,21 @@ import json
 STORE_FILE = 'sheet_id.json'
 MSG_INDEX = 'msg_ids'
 SHEET_INDEX = 'sheet_id'
+GID_INDEX = 'gid'
 
 def store_sheet_id(sheet_id):
     with open(STORE_FILE, 'w') as f:
         json.dump({SHEET_INDEX: sheet_id }, f)
+
+def get_gid():
+    try:
+        with open(STORE_FILE) as f:
+            data = json.load(f)
+            g_id = data[GID_INDEX]
+            return g_id
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("Error: Could not open sheet_id.json")
+        return False
 
 def get_sheet_id():
     try:

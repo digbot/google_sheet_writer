@@ -46,3 +46,4 @@ def clear_worksheet(sheet):
     worksheet_list = sheet.worksheets()
     for worksheet in worksheet_list:
         worksheet.clear()
+    print(f"Clearing worksheet DONE!!!")

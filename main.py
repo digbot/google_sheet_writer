@@ -32,10 +32,7 @@ def search_messages(search_query, processed_ids):
 
         messages = fetch_message(service, search_query)
 
-        data = [
-            ['Data', 'Sum']
-        ]
-
+        data = []
         # Print the subject of each email
         msg_ids = []
         for message in messages:
@@ -43,7 +40,8 @@ def search_messages(search_query, processed_ids):
             #headers = msg['payload']['headers']
             msg_id = msg['id']
             msg_ids.append(msg_id)
-            line = extract_bgn_numbers_and_dates(msg['snippet'])
+            line = extract_bgn_numbers_and_dates(msg['snippet'], msg_id)
+
             is_msg_processed = msg_id not in processed_ids
             if line and is_msg_processed:
                 data.append(line)
@@ -93,4 +91,6 @@ if __name__ == '__main__':
     result = sheets_service.spreadsheets().values().update(
         spreadsheetId=sheet_id, range=range_name, valueInputOption=value_input_option, body=body
     ).execute()
-    print(f'{result["updatedCells"]} cells updated')
+
+    if result["updatedCells"]:
+        print(f'{result["updatedCells"]} cells updated')

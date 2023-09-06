@@ -3,7 +3,7 @@ import re
 from datetime import datetime
 
 def negativeNumber(x):
-    neg = x * (-1)
+    neg = float('-' + x)
     return neg
 
 def convert_to_date(date_time_str):
@@ -15,7 +15,7 @@ def convert_to_date(date_time_str):
     date_str = date_obj.strftime('%d.%m.%Y')
     return date_str
 
-def extract_bgn_numbers_and_dates(text):
+def extract_bgn_numbers_and_dates(text, id):
     # Regular expression to match BGN numbers
     #bgn_pattern = r"\b\d+(?:\.\d{1,2})?\s*BGN\b"
     bgn_pattern = r"\b(\d+(?:\.\d{1,2})?)\s*BGN\b"
@@ -31,6 +31,6 @@ def extract_bgn_numbers_and_dates(text):
 
     # Return a tuple of th BGN numbers and dates
     if  (len(date_matches) and len(bgn_matches)):
-        return [convert_to_date(date_matches[0]), bgn_matches[0] ]
+        return [convert_to_date(date_matches[0]), negativeNumber(bgn_matches[0]), id]
     else:
         return False
