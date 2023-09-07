@@ -1,6 +1,6 @@
 from helpers.storeHelper import store_sheet_id, get_sheet_id
 
-def get_sheet(sheet_id, sheets_service, client):
+def get_sheet(sheet_id, sheet_title, sheets_service, client):
     if sheet_id:
         sheet = client.open_by_key(sheet_id)
     else:
@@ -8,7 +8,7 @@ def get_sheet(sheet_id, sheets_service, client):
         sheet = sheets_service.spreadsheets().create(
             body={
                 'properties': {'title': sheet_title},
-                'sheets': [{'properties': {'title': 'Sheet 1'}}],
+                'sheets': [{'properties': {'title': sheet_title}}],
             }
         ).execute()
         sheet_id = sheet['spreadsheetId']

@@ -14,10 +14,10 @@ def get_gid():
     try:
         with open(STORE_FILE) as f:
             data = json.load(f)
-            g_id = data[GID_INDEX]
-            return g_id
+            gid = data[GID_INDEX]
+            return gid
     except (FileNotFoundError, json.JSONDecodeError):
-        print("Error: Could not open sheet_id.json")
+        print("Error: Could not open gid.json")
         return False
 
 def get_sheet_id():
