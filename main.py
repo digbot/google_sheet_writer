@@ -68,21 +68,21 @@ if __name__ == '__main__':
 
     sheet_id = get_sheet_id()
 
-    gid = get_gid()
+    sheet_title = get_gid()
 
     processed_ids = get_processed_ids()
     
-    sheet = get_sheet(sheet_id, gid, sheets_service, client)
+    sheet = get_sheet(sheet_id, sheet_title, sheets_service, client)
 
-    clear_worksheet(sheet)
+    clear_worksheet(sheets_service, sheet_id, sheet_title)
 
-    first_empty_row = get_first_empty_row(sheets_service, sheet_id, gid)
+    first_empty_row = get_first_empty_row(sheets_service, sheet_id, sheet_title)
     print(f'{first_empty_row} first_empty_row')
 
     # Search for messages with subject "CC NOTIFICATION"
     data = search_messages("CC NOTIFICATION", processed_ids)
 
-    range_name = gid + '!A1:C900'
+    range_name = sheet_title + '!A1:C900'
     value_input_option = 'USER_ENTERED'
     body = {
         'range': range_name,

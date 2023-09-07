@@ -1,21 +1,27 @@
 
 import json
+from datetime import datetime
 
 STORE_FILE = 'sheet_id.json'
 MSG_INDEX = 'msg_ids'
 SHEET_INDEX = 'sheet_id'
 GID_INDEX = 'gid'
 
-def store_sheet_id(sheet_id):
+def store_sheet_and_git_id(sheet_id, sheet_name):
     with open(STORE_FILE, 'w') as f:
-        json.dump({SHEET_INDEX: sheet_id }, f)
+        json.dump({SHEET_INDEX: sheet_id,GID_INDEX: sheet_name, MSG_INDEX: [] }, f)
 
 def get_gid():
     try:
         with open(STORE_FILE) as f:
             data = json.load(f)
-            gid = data[GID_INDEX]
-            return gid
+            if GID_INDEX in data:
+                gid = data[GID_INDEX]
+                return gid
+            else:
+                year = datetime.now().strftime('%y')
+                month = datetime.now().strftime('%h')
+                return str(month)+str(year)
     except (FileNotFoundError, json.JSONDecodeError):
         print("Error: Could not open gid.json")
         return False
@@ -34,8 +40,11 @@ def get_processed_ids():
     try:
         with open(STORE_FILE) as f:
             data = json.load(f)
-            msg_id_list = data[MSG_INDEX]
-            return msg_id_list
+            if MSG_INDEX in data:
+                msg_id_list = data[MSG_INDEX]
+                return msg_id_list
+            else: 
+                return []
     except (FileNotFoundError, json.JSONDecodeError):
         print("Error: Could not open sheet_id.json")
         return False

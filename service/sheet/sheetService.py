@@ -1,10 +1,10 @@
-from helpers.storeHelper import store_sheet_id, get_sheet_id
+from helpers.storeHelper import store_sheet_and_git_id, get_sheet_id
 
 def get_sheet(sheet_id, sheet_title, sheets_service, client):
     if sheet_id:
         sheet = client.open_by_key(sheet_id)
     else:
-        sheet_title = 'Email content'
+        sheet_title = sheet_title
         sheet = sheets_service.spreadsheets().create(
             body={
                 'properties': {'title': sheet_title},
@@ -13,7 +13,7 @@ def get_sheet(sheet_id, sheet_title, sheets_service, client):
         ).execute()
         sheet_id = sheet['spreadsheetId']
         print(f'Created new sheet with title "{sheet_title}" and ID "{sheet_id}"')
-        store_sheet_id(sheet_id)
+        store_sheet_and_git_id(sheet_id, sheet_title)
     return sheet
 
 def get_first_empty_row(service, spreadsheet_id, sheet_name):
@@ -42,8 +42,23 @@ def get_first_empty_row(service, spreadsheet_id, sheet_name):
         row_num += 1
     return row_num
 
-def clear_worksheet(sheet):
-    worksheet_list = sheet.worksheets()
-    for worksheet in worksheet_list:
-        worksheet.clear()
-    print(f"Clearing worksheet DONE!!!")
+def get_sheet_by_name(service, spreadsheet_id, sheet_name):
+    # Get the sheet by name
+    sheet_metadata = service.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
+    sheets = sheet_metadata.get('sheets', '')
+    sheet = None
+    for sheet in sheets:
+        if sheet['properties']['title'] == sheet_name:
+            return sheet
+    if sheet is None:
+        print(f"No sheet with name {sheet_name} found.")
+        return None
+
+def clear_worksheet(service, spreadsheet_id, sheet_name):
+    sheet = get_sheet_by_name(service, spreadsheet_id, sheet_name)
+    if  sheet is not None: 
+        sheet.clear()
+        print(f"Clearing worksheet DONE!!!")
+    else:
+        print(f"Clearing worksheet SKIPED!")
+      
