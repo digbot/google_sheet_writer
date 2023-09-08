@@ -2,7 +2,7 @@
 import json
 from datetime import datetime
 
-STORE_FILE = 'sheet_id.json'
+STORE_FILE = 'config.json'
 MSG_INDEX = 'msg_ids'
 SHEET_INDEX = 'sheet_id'
 GID_INDEX = 'gid'
