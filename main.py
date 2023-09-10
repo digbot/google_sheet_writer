@@ -1,7 +1,8 @@
+import gspread
+import datetime
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-import gspread
-from helpers.commonHelper import extract_bgn_numbers_and_dates
+from helpers.commonHelper import extract_bgn_numbers_and_dates,DATE_FORMAT
 from helpers.storeHelper import get_sheet_id, append_to_json_file, get_processed_ids, get_gid
 from service.sheet.sheetService import get_first_empty_row, get_sheet, clear_worksheet
 from service.gmail.gmailService import get_gmail_service, get_gmail_cred
@@ -51,7 +52,8 @@ def search_messages(search_query, processed_ids):
           
         append_to_json_file(msg_ids)
 
-        data.reverse()
+        #data.reverse()
+        data.sort(key=lambda x: datetime.datetime.strptime(x[0], DATE_FORMAT))
          
         return data
 

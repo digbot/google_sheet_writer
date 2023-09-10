@@ -1,6 +1,7 @@
 
 import re
 from datetime import datetime
+DATE_FORMAT='%d.%m.%Y'
 
 def negativeNumber(x):
     neg = float('-' + x)
@@ -12,7 +13,7 @@ def convert_to_date(date_time_str):
     # Extract only the date portion
     date_obj = date_time_obj.date()
     # Format the date as a string
-    date_str = date_obj.strftime('%d.%m.%Y')
+    date_str = date_obj.strftime(DATE_FORMAT)
     return date_str
 
 def extract_bgn_numbers_and_dates(text, id):

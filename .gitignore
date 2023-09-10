@@ -2,4 +2,6 @@ sheet_id.json
 config.json
 credentials.json
 token.pickle
+.env
+manual.json
 *.pyc
