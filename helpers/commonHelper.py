@@ -40,8 +40,8 @@ def extract_bgn_numbers_and_dates(text, id):
     date_matches = re.findall(date_pattern, text)
 
     # if we just load we don't need this data
-    if (len(bgn_matches)):
-        if (bgn_matches[1] > 7020):
+    if (len(bgn_matches) > 1):
+        if (int(float(bgn_matches[1])) > 7020):
             bgn_matches.clear()
 
     if (len(eur_matches)):
