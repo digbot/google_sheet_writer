@@ -2,7 +2,7 @@ import gspread
 import datetime
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from helpers.commonHelper import extract_bgn_numbers_and_dates,DATE_FORMAT
+from helpers.commonHelper import extract_bgn_numbers_and_dates, DATE_FORMAT
 from helpers.storeHelper import get_sheet_id, append_to_json_file, get_processed_ids, get_gid
 from service.sheet.sheetService import get_first_empty_row, get_sheet, clear_worksheet
 from service.gmail.gmailService import get_gmail_service, get_gmail_cred
@@ -11,6 +11,10 @@ from service.gmail.gmailService import get_gmail_service, get_gmail_cred
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
           'https://www.googleapis.com/auth/drive',
           'https://www.googleapis.com/auth/spreadsheets']
+
+
+def fetch_manule_data(data):
+    return data
 
 def fetch_message(service, search_query):
     query = "subject:" + search_query
@@ -25,6 +29,13 @@ def fetch_message(service, search_query):
         if 'messages' in response:
             messages.extend(response['messages'])
     return messages
+
+def process_main_data(data):
+    
+    #data.reverse()
+    data.sort(key=lambda x: datetime.datetime.strptime(x[0], DATE_FORMAT))
+
+    return data
 
 def search_messages(search_query, processed_ids):
     service = get_gmail_service()
@@ -52,9 +63,8 @@ def search_messages(search_query, processed_ids):
           
         append_to_json_file(msg_ids)
 
-        #data.reverse()
-        data.sort(key=lambda x: datetime.datetime.strptime(x[0], DATE_FORMAT))
-         
+        data = process_main_data(data)
+      
         return data
 
     except HttpError as error:
