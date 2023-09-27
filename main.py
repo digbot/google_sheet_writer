@@ -1,9 +1,10 @@
 import gspread
 import datetime
+from datetime import datetime
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from helpers.commonHelper import extract_bgn_numbers_and_dates, DATE_FORMAT
-from helpers.storeHelper import get_sheet_id, append_to_json_file, get_processed_ids, get_gid
+from helpers.storeHelper import get_sheet_id, append_to_json_file, get_processed_ids, get_gid, fetch_manule_data
 from service.sheet.sheetService import get_first_empty_row, get_sheet, clear_worksheet
 from service.gmail.gmailService import get_gmail_service, get_gmail_cred
 
@@ -12,12 +13,13 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
           'https://www.googleapis.com/auth/drive',
           'https://www.googleapis.com/auth/spreadsheets']
 
-
-def fetch_manule_data(data):
-    return data
-
 def fetch_message(service, search_query):
+    input_dt = datetime.today()
+    first_day_of_a_month = input_dt.replace(day=1)
+    date_after = str(int(first_day_of_a_month.timestamp()))
+    #query = "after:" + date_after + ";subject:" + search_query
     query = "subject:" + search_query
+    print('fetch_message_Query: ' + query)
     response = service.users().messages().list(userId='me', q=query).execute()
     messages = []
     if 'messages' in response:
@@ -33,7 +35,7 @@ def fetch_message(service, search_query):
 def process_main_data(data):
     
     #data.reverse()
-    data.sort(key=lambda x: datetime.datetime.strptime(x[0], DATE_FORMAT))
+    data.sort(key=lambda x: datetime.strptime(x[0], DATE_FORMAT))
 
     return data
 
@@ -63,14 +65,13 @@ def search_messages(search_query, processed_ids):
           
         append_to_json_file(msg_ids)
 
-        data = process_main_data(data)
-      
         return data
 
     except HttpError as error:
         print(F'An error occurred: {error}')
 
 if __name__ == '__main__':
+
     # Create a new Google Sheet
     creds = get_gmail_cred()
 
@@ -92,7 +93,13 @@ if __name__ == '__main__':
     print(f'{first_empty_row} first_empty_row')
 
     # Search for messages with subject "CC NOTIFICATION"
-    data = search_messages("CC NOTIFICATION", processed_ids)
+    msgs_data = search_messages("CC NOTIFICATION", processed_ids)
+
+    manuel_data = fetch_manule_data()
+
+    print("The msgs_data is: ", msgs_data) #printing the array
+
+    data = process_main_data(msgs_data)
 
     range_name = sheet_title + '!A1:C900'
     value_input_option = 'USER_ENTERED'

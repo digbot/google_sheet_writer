@@ -3,6 +3,8 @@ import json
 from datetime import datetime
 
 STORE_FILE = 'config.json'
+MANUAL_STORE_FILE = 'manual.json'
+MANUAL_ITEMS = 'items'
 MSG_INDEX = 'msg_ids'
 SHEET_INDEX = 'sheet_id'
 GID_INDEX = 'gid'
@@ -32,6 +34,21 @@ def get_sheet_id():
             data = json.load(f)
             sheet_id = data[SHEET_INDEX]
             return sheet_id
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("Error: Could not open sheet_id.json")
+        return False
+
+def fetch_manule_data():
+    print("with open ")
+    try:
+        with open(MANUAL_STORE_FILE) as f:
+            data = json.load(f)
+            if MANUAL_ITEMS in data:
+                item_list = data[MANUAL_ITEMS]
+                print("The Array is: ", item_list) #printing the array
+                return item_list
+            else: 
+                return []
     except (FileNotFoundError, json.JSONDecodeError):
         print("Error: Could not open sheet_id.json")
         return False

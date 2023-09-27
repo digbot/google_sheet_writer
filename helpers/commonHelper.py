@@ -30,11 +30,11 @@ def extract_bgn_numbers_and_dates(text, id):
 
     # Find all BGN numbers in the text
     bgn_matches = re.findall(bgn_pattern, text)
-    print('bgn_matches: ' + ' '.join(bgn_matches))
+    # print('bgn_matches: ' + ' '.join(bgn_matches))
     
     # Find all BGN numbers in the text
     eur_matches = re.findall(euro_pattern, text)
-    print('eur_matches: ' + ' '.join(eur_matches))
+    # print('eur_matches: ' + ' '.join(eur_matches))
     
     # Find all dates in the text
     date_matches = re.findall(date_pattern, text)
