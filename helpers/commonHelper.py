@@ -16,7 +16,7 @@ def convert_to_date(date_time_str):
     date_str = date_obj.strftime(DATE_FORMAT)
     return date_str
 
-def extract_bgn_numbers_and_dates(text, id):
+def create_line_object(text, id):
     # Regular expression to match BGN numbers
     #bgn_pattern = r"\b\d+(?:\.\d{1,2})?\s*BGN\b"
     bgn_pattern = r"\b(\d+(?:\.\d{1,2})?)\s*BGN\b"
@@ -51,6 +51,9 @@ def extract_bgn_numbers_and_dates(text, id):
 
     # Return a tuple of th BGN numbers and dates
     if  (len(date_matches) and len(bgn_matches)):
-        return [convert_to_date(date_matches[0]), negativeNumber(bgn_matches[0]), id]
+        value = negativeNumber(bgn_matches[0])
+        date = convert_to_date(date_matches[0])
+        msg_id = date + '_' + id
+        return [date, value , msg_id]
     else:
         return False

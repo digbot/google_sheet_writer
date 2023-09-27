@@ -3,7 +3,7 @@ import datetime
 from datetime import datetime
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from helpers.commonHelper import extract_bgn_numbers_and_dates, DATE_FORMAT
+from helpers.commonHelper import create_line_object, DATE_FORMAT
 from helpers.storeHelper import get_sheet_id, append_to_json_file, get_processed_ids, get_gid, fetch_manule_data
 from service.sheet.sheetService import get_first_empty_row, get_sheet, clear_worksheet
 from service.gmail.gmailService import get_gmail_service, get_gmail_cred
@@ -54,7 +54,7 @@ def search_messages(search_query, processed_ids):
             #headers = msg['payload']['headers']
             msg_id = msg['id']
             msg_ids.append(msg_id)
-            line = extract_bgn_numbers_and_dates(msg['snippet'], msg_id)
+            line = create_line_object(msg['snippet'], msg_id)
 
             is_msg_processed = msg_id not in processed_ids
             if line and is_msg_processed:
