@@ -7,6 +7,8 @@ from helpers.commonHelper import create_line_object, DATE_FORMAT
 from helpers.storeHelper import get_sheet_id, append_to_json_file, get_processed_ids, get_gid, fetch_manule_data
 from service.sheet.sheetService import get_first_empty_row, get_sheet, clear_worksheet
 from service.gmail.gmailService import get_gmail_service, get_gmail_cred
+from collections import deque
+
 
 # Define the scopes that the application will need
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
@@ -53,15 +55,19 @@ def search_messages(search_query, processed_ids):
             msg = service.users().messages().get(userId='me', id=message['id']).execute()
             #headers = msg['payload']['headers']
             msg_id = msg['id']
-            msg_ids.append(msg_id)
             line = create_line_object(msg['snippet'], msg_id)
-
+        
+            
             is_msg_processed = msg_id not in processed_ids
             if line and is_msg_processed:
                 data.append(line)
                 print('Added: ' + msg['snippet'])
             else:
-                print('Bypass: ' + msg['snippet'])                 
+                print('Bypass: ' + msg['snippet'])
+            if line:
+                last_elem = deque(line).pop()
+                msg_ids.append(last_elem)
+
           
         append_to_json_file(msg_ids)
 
