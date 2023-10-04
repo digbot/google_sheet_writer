@@ -4,7 +4,7 @@ from datetime import datetime
 
 DATA_FOLDER = 'data/Oct23.json'
 STORE_FILE = 'config.json'
-MANUAL_STORE_FILE = 'manual.json'
+MANUAL_STORE_FILE = 'data/Oct23_manual.json'
 MANUAL_ITEMS = 'items'
 MSG_INDEX = 'msg_ids'
 SHEET_INDEX = 'sheet_id'
@@ -42,18 +42,18 @@ def get_sheet_id():
         return False
 
 def fetch_manule_data():
-    print("with open ")
+    print("with open "+ MANUAL_STORE_FILE)
     try:
         with open(MANUAL_STORE_FILE) as f:
             data = json.load(f)
-            if MANUAL_ITEMS in data:
-                item_list = data[MANUAL_ITEMS]
+            if MSG_INDEX in data:
+                item_list = data[MSG_INDEX]
                 print("The Array is: ", item_list) #printing the array
                 return item_list
             else: 
                 return []
     except (FileNotFoundError, json.JSONDecodeError):
-        print("Error: Could not open sheet_id.json")
+        print("Error: fetch_manule_data can't open file:" + MANUAL_STORE_FILE)
         return False
     
 def get_processed_ids(git):

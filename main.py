@@ -73,6 +73,11 @@ def search_messages(search_query, processed_ids):
     except HttpError as error:
         print(F'An error occurred: {error}')
 
+def add_item(data, manuel_data):
+    for manuel_item in manuel_data:
+        data.append(manuel_item)
+    return data
+
 if __name__ == '__main__':
 
     # Create a new Google Sheet
@@ -97,16 +102,16 @@ if __name__ == '__main__':
 
     # Search for messages with subject "CC NOTIFICATION"
     msgs_data = search_messages("CC NOTIFICATION", processed_ids)
-
+    
     manuel_data = fetch_manule_data()
 
-    msgs_data.append(manuel_data)
+    data = add_item(msgs_data, manuel_data)
 
-    print("The msgs_data is: ", msgs_data) #printing the array
+    print("The msgs_data is: ", data) #printing the array
 
-    data = process_main_data(msgs_data)
+    data = process_main_data(data)
 
-    range_name = git + '!A1:C900'
+    range_name = git + '!A1:D900'
     value_input_option = 'USER_ENTERED'
     body = {
         'range': range_name,
