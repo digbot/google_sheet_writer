@@ -9,7 +9,6 @@ from service.sheet.sheetService import get_first_empty_row, get_sheet, clear_wor
 from service.gmail.gmailService import get_gmail_service, get_gmail_cred
 from collections import deque
 
-
 # Define the scopes that the application will need
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
           'https://www.googleapis.com/auth/drive',
@@ -19,8 +18,8 @@ def fetch_message(service, search_query):
     input_dt = datetime.today()
     first_day_of_a_month = input_dt.replace(day=1)
     date_after = str(int(first_day_of_a_month.timestamp()))
-    #query = "after:" + date_after + ";subject:" + search_query
-    query = "subject:" + search_query
+    query = "after:" + date_after + ";subject:" + search_query
+    #query = "subject:" + search_query
     print('fetch_message_Query: ' + query)
     response = service.users().messages().list(userId='me', q=query).execute()
     messages = []
@@ -56,7 +55,6 @@ def search_messages(search_query, processed_ids):
             #headers = msg['payload']['headers']
             msg_id = msg['id']
             line = create_line_object(msg['snippet'], msg_id)
-        
             
             is_msg_processed = msg_id not in processed_ids
             if line and is_msg_processed:
@@ -67,7 +65,6 @@ def search_messages(search_query, processed_ids):
             if line:
                 last_elem = deque(line).pop()
                 msg_ids.append(last_elem)
-
           
         append_to_json_file(msg_ids)
 
@@ -87,15 +84,15 @@ if __name__ == '__main__':
 
     sheet_id = get_sheet_id()
 
-    sheet_title = get_gid()
+    git = get_gid()
 
-    processed_ids = get_processed_ids()
+    processed_ids = get_processed_ids(git)
     
-    sheet = get_sheet(sheet_id, sheet_title, sheets_service, client)
+    sheet = get_sheet(sheet_id, git, sheets_service, client)
 
-    clear_worksheet(sheets_service, sheet_id, sheet_title)
+    clear_worksheet(sheets_service, sheet_id, git)
 
-    first_empty_row = get_first_empty_row(sheets_service, sheet_id, sheet_title)
+    first_empty_row = get_first_empty_row(sheets_service, sheet_id, git)
     print(f'{first_empty_row} first_empty_row')
 
     # Search for messages with subject "CC NOTIFICATION"
@@ -103,11 +100,13 @@ if __name__ == '__main__':
 
     manuel_data = fetch_manule_data()
 
+    msgs_data.append(manuel_data)
+
     print("The msgs_data is: ", msgs_data) #printing the array
 
     data = process_main_data(msgs_data)
 
-    range_name = sheet_title + '!A1:C900'
+    range_name = git + '!A1:C900'
     value_input_option = 'USER_ENTERED'
     body = {
         'range': range_name,

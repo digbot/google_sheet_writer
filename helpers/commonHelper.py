@@ -54,6 +54,6 @@ def create_line_object(text, id):
         value = negativeNumber(bgn_matches[0])
         date = convert_to_date(date_matches[0])
         msg_id = date + '_' + id
-        return [date, value , msg_id]
+        return [date, value,  msg_id]
     else:
         return False
