@@ -75,6 +75,9 @@ def search_messages(search_query, processed_ids):
 
 def add_item(data, manuel_data):
     for manuel_item in manuel_data:
+        key = manuel_item[0]
+        manuel_item_str = '_'.join(manuel_item)
+        manuel_item.append(str(key) + '_' + str(hash(manuel_item_str)))
         data.append(manuel_item)
     return data
 
