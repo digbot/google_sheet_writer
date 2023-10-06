@@ -1,6 +1,7 @@
 
 import json
 from datetime import datetime
+import codecs
 
 DATA_FOLDER = 'data/Oct23.json'
 STORE_FILE = 'config.json'
@@ -44,7 +45,7 @@ def get_sheet_id():
 def fetch_manule_data():
     print("with open "+ MANUAL_STORE_FILE)
     try:
-        with open(MANUAL_STORE_FILE) as f:
+        with  codecs.open(MANUAL_STORE_FILE, "r", "utf-8") as f:
             data = json.load(f)
             if MSG_INDEX in data:
                 item_list = data[MSG_INDEX]

@@ -74,11 +74,12 @@ def search_messages(search_query, processed_ids):
         print(F'An error occurred: {error}')
 
 def add_item(data, manuel_data):
-    for manuel_item in manuel_data:
-        key = manuel_item[0]
-        manuel_item_str = '_'.join(manuel_item)
-        manuel_item.append(str(key) + '_' + str(hash(manuel_item_str)))
-        data.append(manuel_item)
+    if len(manuel_data):
+        for manuel_item in manuel_data:
+            key = manuel_item[0]
+            manuel_item_str = '_'.join(manuel_item)
+            manuel_item.append(str(key) + '_' + str(hash(manuel_item_str)))
+            data.append(manuel_item)
     return data
 
 if __name__ == '__main__':
@@ -114,7 +115,7 @@ if __name__ == '__main__':
 
     data = process_main_data(data)
 
-    range_name = git + '!A1:D900'
+    range_name = git + '!A1:E900'
     value_input_option = 'USER_ENTERED'
     body = {
         'range': range_name,
