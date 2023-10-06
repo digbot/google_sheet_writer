@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 import codecs
 
-DATA_FOLDER = 'data/Oct23.json'
+DATA_FOLDER = 'data/Oct23_cc_card.json'
 STORE_FILE = 'config.json'
 MANUAL_STORE_FILE = 'data/Oct23_manual.json'
 MANUAL_ITEMS = 'items'
