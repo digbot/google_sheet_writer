@@ -5,6 +5,4 @@ token.pickle
 .env
 manual.json
 *.pyc
-data/Oct23.json
-data/Oct32_cc_card.json
-data/Oct23_manual.json
+data/*.json
