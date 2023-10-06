@@ -40,7 +40,7 @@ def process_main_data(data):
 
     return data
 
-def search_messages(search_query, processed_ids):
+def search_messages(search_query, processed_ids, git):
     service = get_gmail_service()
     """Searches for messages using the Gmail API and returns a list of message IDs"""
     try:
@@ -66,7 +66,7 @@ def search_messages(search_query, processed_ids):
                 last_elem = deque(line).pop()
                 msg_ids.append(last_elem)
           
-        append_to_json_file(msg_ids)
+        append_to_json_file(msg_ids, git)
 
         return data
 
@@ -105,9 +105,9 @@ if __name__ == '__main__':
     print(f'{first_empty_row} first_empty_row')
 
     # Search for messages with subject "CC NOTIFICATION"
-    msgs_data = search_messages("CC NOTIFICATION", processed_ids)
+    msgs_data = search_messages("CC NOTIFICATION", processed_ids, git)
     
-    manuel_data = fetch_manule_data()
+    manuel_data = fetch_manule_data(git)
 
     data = add_item(msgs_data, manuel_data)
 
