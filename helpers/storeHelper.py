@@ -8,6 +8,7 @@ MANUAL_ITEMS = 'items'
 MSG_INDEX = 'msg_ids'
 SHEET_INDEX = 'sheet_id'
 GID_INDEX = 'gid'
+DATA_FOLDER = 'data/'
 
 def store_sheet_and_git_id(sheet_id, sheet_name, git):
     #with open(STORE_FILE, 'w') as f:
@@ -57,11 +58,11 @@ def fetch_manule_data(git):
         return False
     
 def create_manuel_path(git):
-    path = 'data/' + git + '_manual.json'
+    path = DATA_FOLDER + git + '_manual.json'
     return path
 
 def create_gmail_path(git):
-    path = 'data/' + git + '_cc_card.json'
+    path = DATA_FOLDER + git + '_cc_card.json'
     return path
 
 def get_processed_ids(git):

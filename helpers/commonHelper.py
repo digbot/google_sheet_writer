@@ -24,6 +24,10 @@ def create_line_object(text, id):
     # Regular expression to match BGN numbers
     #bgn_pattern = r"\b\d+(?:\.\d{1,2})?\s*BGN\b"
     euro_pattern = r"\b(\d+(?:\.\d{1,2})?)\s*EUR\b"
+
+    # Regular expression to match USD numbers
+    #bgn_pattern = r"\b\d+(?:\.\d{1,2})?\s*USD\b"
+    usd_pattern = r"\b(\d+(?:\.\d{1,2})?)\s*USD\b"
     
     # Regular expression to match dates
     date_pattern = r"\b\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2}:\d{2}\b"
@@ -34,6 +38,9 @@ def create_line_object(text, id):
     
     # Find all BGN numbers in the text
     eur_matches = re.findall(euro_pattern, text)
+    # print('eur_matches: ' + ' '.join(eur_matches))
+
+    usd_matches = re.findall(usd_pattern, text)
     # print('eur_matches: ' + ' '.join(eur_matches))
     
     # Find all dates in the text
@@ -48,6 +55,12 @@ def create_line_object(text, id):
         bgn_matches.clear()
         items = re.findall(r'\d+\.\d+', (eur_matches[0] + eur_matches[0]))
         bgn_matches.append(items[0])
+
+    if (len(usd_matches)):
+        bgn_matches.clear()
+        items = re.findall(r'\d+\.\d+', (usd_matches[0] + usd_matches[0]))
+        bgn_matches.append(items[0])
+    
     comment1 = ''
     comment2 = ''
 
