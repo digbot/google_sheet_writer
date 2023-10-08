@@ -1,13 +1,13 @@
 #Personal accounting software
 
 About:
-    personal accounting software that uses two sources of data. Gmail and JSON file:
-        Input:
-            Gmail:
+    personal accounting software that uses two sources of data. Gmail and JSON file
+        Input
+            Gmail
                 Google APIs in USE:
                     Sheet API service
                     Gmail API service
-            Cache:
+            Cache
                 Json File
         Output:
             Google Sheets
