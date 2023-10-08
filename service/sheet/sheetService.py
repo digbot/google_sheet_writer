@@ -58,7 +58,7 @@ def clear_worksheet(service, spreadsheet_id, sheet_name):
     sheet = get_sheet_by_name(service, spreadsheet_id, sheet_name)
     if  sheet is not None: 
         sheet.clear()
-        print(f"Clearing worksheet DONE!!!")
+        print(f"g")
     else:
         print(f"Clearing worksheet SKIPED!")
       
