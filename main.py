@@ -4,7 +4,7 @@ from datetime import datetime
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from helpers.commonHelper import create_line_object, DATE_FORMAT
-from helpers.storeHelper import get_sheet_id, append_to_json_file, get_processed_ids, get_gid, fetch_manule_data
+from helpers.storeHelper import get_sheet_id, append_to_json_file, get_processed_ids, get_gid, fetch_cache_data
 from service.sheet.sheetService import get_first_empty_row, get_sheet, clear_worksheet
 from service.gmail.gmailService import get_gmail_service, get_gmail_cred
 from collections import deque
@@ -73,13 +73,13 @@ def search_messages(search_query, processed_ids, git):
     except HttpError as error:
         print(F'An error occurred: {error}')
 
-def add_item(data, manuel_data):
-    if len(manuel_data):
-        for manuel_item in manuel_data:
-            key = manuel_item[0]
-            manuel_item_str = '_'.join(manuel_item)
-            manuel_item.append(str(key) + '_' + str(hash(manuel_item_str)))
-            data.append(manuel_item)
+def add_item(data, cache_data):
+    if len(cache_data):
+        for cache_item in cache_data:
+            key = cache_item[0]
+            cache_item_str = '_'.join(cache_item)
+            cache_item.append(str(key) + '_' + str(hash(cache_item_str)))
+            data.append(cache_item)
     return data
 
 if __name__ == '__main__':
@@ -107,9 +107,9 @@ if __name__ == '__main__':
     # Search for messages with subject "CC NOTIFICATION"
     msgs_data = search_messages("CC NOTIFICATION", processed_ids, git)
     
-    manuel_data = fetch_manule_data(git)
+    cache_data = fetch_cache_data(git)
 
-    data = add_item(msgs_data, manuel_data)
+    data = add_item(msgs_data, cache_data)
 
     print("The msgs_data is: ", data) #printing the array
 

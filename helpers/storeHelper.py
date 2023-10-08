@@ -41,8 +41,8 @@ def get_sheet_id():
         print("Error: Could not open sheet_id.json")
         return False
 
-def fetch_manule_data(git):
-    path = create_manuel_path(git)
+def fetch_cache_data(git):
+    path = create_cache_path(git)
     print("with open "+ path)
     try:
         with  codecs.open(path, "r", "utf-8") as f:
@@ -57,8 +57,8 @@ def fetch_manule_data(git):
         print("Error: fetch_manule_data can't open file:" + path)
         return False
     
-def create_manuel_path(git):
-    path = DATA_FOLDER + git + '_manual.json'
+def create_cache_path(git):
+    path = DATA_FOLDER + git + '_cache.json'
     return path
 
 def create_gmail_path(git):

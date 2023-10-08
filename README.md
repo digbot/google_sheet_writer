@@ -8,7 +8,7 @@ personal accounting software that uses two sources of data. Gmail and JSON file.
                 Google APIs in USE:
                     Sheet API service
                     Gmail API service
-            Manuel:
+            Cache:
                 Json File
         Output:
             Google Sheets
