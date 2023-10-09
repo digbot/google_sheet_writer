@@ -58,8 +58,9 @@ def create_line_object(text, id):
 
     if (len(usd_matches)):
         bgn_matches.clear()
-        items = re.findall(r'\d+\.\d+', (usd_matches[0] + usd_matches[0]))
-        bgn_matches.append(items[0])
+        items = re.findall(r'\d+\.\d+', usd_matches[0])
+        usd_value = round(float(items[0]),2) * 1.85
+        bgn_matches.append(str(usd_value))
     
     comment1 = ''
     comment2 = ''
