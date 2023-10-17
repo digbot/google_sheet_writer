@@ -47,10 +47,6 @@ def create_line_object(text, id):
     date_matches = re.findall(date_pattern, text)
 
     # if we just load we don't need this data
-    if (len(bgn_matches) > 1):
-        if (int(float(bgn_matches[1])) > 7020):
-            bgn_matches.clear()
-
     if (len(eur_matches)):
         bgn_matches.clear()
         items = re.findall(r'\d+\.\d+', (eur_matches[0] + eur_matches[0]))
