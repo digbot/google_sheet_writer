@@ -16,6 +16,13 @@ def convert_to_date(date_time_str):
     date_str = date_obj.strftime(DATE_FORMAT)
     return date_str
 
+def is_subject_ignored(subject):
+    find = subject.find('pogashenie') != -1
+    if find:
+        return True
+    else:
+        return False
+
 def create_line_object(text, id):
     # Regular expression to match BGN numbers
     #bgn_pattern = r"\b\d+(?:\.\d{1,2})?\s*BGN\b"

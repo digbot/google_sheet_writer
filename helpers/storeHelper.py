@@ -9,6 +9,7 @@ MSG_INDEX = 'msg_ids'
 SHEET_INDEX = 'sheet_id'
 GID_INDEX = 'gid'
 DATA_FOLDER = 'data/'
+SUBJECT = 'subject'
 
 def store_sheet_and_git_id(sheet_id, sheet_name, git):
     #with open(STORE_FILE, 'w') as f:
@@ -41,11 +42,21 @@ def get_sheet_id():
         print("Error: Could not open sheet_id.json")
         return False
 
+def get_subject_from_config():
+    try:
+        with open(STORE_FILE) as f:
+            data = json.load(f)
+            subject = data[SUBJECT]
+            return subject
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("Error: Could not open sheet_id.json")
+        return False
+
 def fetch_cache_data(git):
     path = create_cache_path(git)
     print("with open "+ path)
     try:
-        with  codecs.open(path, "r", "utf-8") as f:
+        with codecs.open(path, "r", "utf-8") as f:
             data = json.load(f)
             if MSG_INDEX in data:
                 item_list = data[MSG_INDEX]

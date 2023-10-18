@@ -3,8 +3,8 @@ import datetime
 from datetime import datetime
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from helpers.commonHelper import create_line_object, DATE_FORMAT
-from helpers.storeHelper import get_sheet_id, append_to_json_file, get_processed_ids, get_gid, fetch_cache_data
+from helpers.commonHelper import create_line_object, is_subject_ignored, DATE_FORMAT
+from helpers.storeHelper import get_sheet_id, append_to_json_file, get_processed_ids, get_gid, fetch_cache_data, get_subject_from_config
 from service.sheet.sheetService import get_first_empty_row, get_sheet, clear_worksheet
 from service.gmail.gmailService import get_gmail_service, get_gmail_cred
 from collections import deque
@@ -54,14 +54,19 @@ def search_messages(search_query, processed_ids, git):
             msg = service.users().messages().get(userId='me', id=message['id']).execute()
             #headers = msg['payload']['headers']
             msg_id = msg['id']
-            line = create_line_object(msg['snippet'], msg_id)
+            subject = msg['snippet']
+
+            if is_subject_ignored(subject):
+                continue
+
+            line = create_line_object(subject, msg_id)
             
             is_msg_processed = msg_id not in processed_ids
             if line and is_msg_processed:
                 data.append(line)
-                print('Added: ' + msg['snippet'])
+                print('Added: ' + subject)
             else:
-                print('Bypass: ' + msg['snippet'])
+                print('Bypass: ' + subject)
             if line:
                 last_elem = deque(line).pop()
                 msg_ids.append(last_elem)
@@ -105,7 +110,8 @@ if __name__ == '__main__':
     print(f'{first_empty_row} first_empty_row')
 
     # Search for messages with subject "CC NOTIFICATION"
-    msgs_data = search_messages("CC NOTIFICATION", processed_ids, git)
+    subject = get_subject_from_config()
+    msgs_data = search_messages(subject, processed_ids, git)
     
     cache_data = fetch_cache_data(git)
 
