@@ -1,16 +1,16 @@
 #Personal accounting software
 
 About:
-    personal accounting software that uses two sources of data. Gmail and JSON file
-        Input:
-            Gmail:
-                Google APIs in USE:
-                    Sheet API service
-                    Gmail API service
-            Cache:
-                Json File
-        Output:
-            Google Sheets
+        personal accounting software that uses two sources of data. Gmail and JSON file
+            Input:
+                Gmail:
+                    Google APIs in USE:
+                        Sheet API service
+                        Gmail API service
+                Cache:
+                    Json File
+            Output:
+                Google Sheets
 
 
         This is my first program that I wrote on Python. I just asked CHAT GPT to write a code snippet and use the code snippets in the program.
