@@ -109,7 +109,6 @@ if __name__ == '__main__':
     first_empty_row = get_first_empty_row(sheets_service, sheet_id, git)
     print(f'{first_empty_row} first_empty_row')
 
-    # Search for messages with subject "CC NOTIFICATION"
     subject = get_subject_from_config()
     msgs_data = search_messages(subject, processed_ids, git)
     
