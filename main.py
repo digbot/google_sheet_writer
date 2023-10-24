@@ -87,6 +87,27 @@ def add_item(data, cache_data):
             data.append(cache_item)
     return data
 
+
+def write_data_into_sheet(sheet_id, git, data):
+    print("The msgs_data is: ", data) #printing the array
+
+    data = process_main_data(data)
+
+    range_name = git + '!A1:E900'
+    value_input_option = 'USER_ENTERED'
+    body = {
+        'range': range_name,
+        'values': data,
+        'majorDimension': 'ROWS',
+    }
+    result = sheets_service.spreadsheets().values().update(
+        spreadsheetId=sheet_id, range=range_name, valueInputOption=value_input_option, body=body
+    ).execute()
+
+    if "updatedCells" in result:
+        print(f'{result["updatedCells"]} cells updated')
+
+
 if __name__ == '__main__':
 
     # Create a new Google Sheet
@@ -120,16 +141,4 @@ if __name__ == '__main__':
 
     data = process_main_data(data)
 
-    range_name = git + '!A1:E900'
-    value_input_option = 'USER_ENTERED'
-    body = {
-        'range': range_name,
-        'values': data,
-        'majorDimension': 'ROWS',
-    }
-    result = sheets_service.spreadsheets().values().update(
-        spreadsheetId=sheet_id, range=range_name, valueInputOption=value_input_option, body=body
-    ).execute()
-
-    if "updatedCells" in result:
-        print(f'{result["updatedCells"]} cells updated')
+    write_data_into_sheet(sheet_id, git, data)
