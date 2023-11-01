@@ -39,7 +39,7 @@ def get_sheet_id():
             sheet_id = data[SHEET_INDEX]
             return sheet_id
     except (FileNotFoundError, json.JSONDecodeError):
-        print("Error: Could not open sheet_id.json")
+        print("Error: get_sheet_id Could not open " + STORE_FILE+ ".json")
         return False
 
 def get_subject_from_config():
@@ -49,7 +49,7 @@ def get_subject_from_config():
             subject = data[SUBJECT]
             return subject
     except (FileNotFoundError, json.JSONDecodeError):
-        print("Error: Could not open sheet_id.json")
+        print("Error: get_subject_from_config Could not open " + STORE_FILE+ ".json")
         return False
 
 def fetch_cache_data(git):
@@ -86,7 +86,7 @@ def get_processed_ids(git):
             else: 
                 return []
     except (FileNotFoundError, json.JSONDecodeError):
-        print("Error: Could not open sheet_id.json")
+        print("Error: Could not open " + create_gmail_path(git) + ".json")
         return False
 
 def append_to_json_file(data, git):

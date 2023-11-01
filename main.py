@@ -35,7 +35,6 @@ def fetch_message(service, search_query):
 
 def process_main_data(data):
     
-    #data.reverse()
     data.sort(key=lambda x: datetime.strptime(x[0], DATE_FORMAT))
 
     return data
@@ -79,6 +78,9 @@ def search_messages(search_query, processed_ids, git):
         print(F'An error occurred: {error}')
 
 def add_item(data, cache_data):
+    if not data:
+        return cache_data
+
     if len(cache_data):
         for cache_item in cache_data:
             key = cache_item[0]
@@ -86,7 +88,6 @@ def add_item(data, cache_data):
             cache_item.append(str(key) + '_' + str(hash(cache_item_str)))
             data.append(cache_item)
     return data
-
 
 def write_data_into_sheet(sheet_id, git, data):
     print("The msgs_data is: ", data) #printing the array
@@ -136,9 +137,7 @@ if __name__ == '__main__':
     cache_data = fetch_cache_data(git)
 
     data = add_item(msgs_data, cache_data)
-
+    
     print("The msgs_data is: ", data) #printing the array
-
-    data = process_main_data(data)
 
     write_data_into_sheet(sheet_id, git, data)
