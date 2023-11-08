@@ -108,7 +108,6 @@ def write_data_into_sheet(sheet_id, git, data):
     if "updatedCells" in result:
         print(f'{result["updatedCells"]} cells updated')
 
-
 if __name__ == '__main__':
 
     # Create a new Google Sheet
@@ -132,6 +131,7 @@ if __name__ == '__main__':
     print(f'{first_empty_row} first_empty_row')
 
     subject = get_subject_from_config()
+
     msgs_data = search_messages(subject, processed_ids, git)
     
     cache_data = fetch_cache_data(git)

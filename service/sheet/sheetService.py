@@ -1,4 +1,4 @@
-from helpers.storeHelper import store_sheet_and_git_id, get_sheet_id
+from helpers.storeHelper import store_sheet_and_git_id
 
 def get_sheet(sheet_id, sheet_title, sheets_service, client):
     if sheet_id:

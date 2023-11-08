@@ -5,7 +5,6 @@ import os
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
-import google.auth
 
 # Define the scopes that the application will need
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
