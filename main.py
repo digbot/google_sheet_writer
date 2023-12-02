@@ -8,15 +8,30 @@ from helpers.storeHelper import get_sheet_id, append_to_json_file, get_processed
 from service.sheet.sheetService import get_first_empty_row, get_sheet, clear_worksheet
 from service.gmail.gmailService import get_gmail_service, get_gmail_cred
 from collections import deque
+import re
+from time import strptime
 
 # Define the scopes that the application will need
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
           'https://www.googleapis.com/auth/drive',
           'https://www.googleapis.com/auth/spreadsheets']
 
-def fetch_message(service, search_query):
+def get_first_day_of_a_month(): 
     input_dt = datetime.today()
     first_day_of_a_month = input_dt.replace(day=1)
+    return first_day_of_a_month
+
+def get_first_day_of_a_month_by_gid(gid): 
+    year = re.findall(r'\d+', gid)
+    year = str(year[0])
+    month = gid.replace(year,'')
+    month = strptime(month,'%b').tm_mon
+    input_dt = datetime.today()
+    first_day_of_a_month = input_dt.replace(year = int('20' + year), month = int(month), day=1)
+    return first_day_of_a_month
+
+def fetch_message(service, search_query, gid):
+    first_day_of_a_month = get_first_day_of_a_month_by_gid(gid)
     date_after = str(int(first_day_of_a_month.timestamp()))
     query = "after:" + date_after + ";subject:" + search_query
     #query = "subject:" + search_query
@@ -44,7 +59,7 @@ def search_messages(search_query, processed_ids, git):
     """Searches for messages using the Gmail API and returns a list of message IDs"""
     try:
 
-        messages = fetch_message(service, search_query)
+        messages = fetch_message(service, search_query, git)
 
         data = []
         # Print the subject of each email

@@ -3,6 +3,13 @@ import re
 from datetime import datetime
 DATE_FORMAT='%d.%m.%Y'
 
+VERBOS_LEVEL_NONE = 0
+VERBOS_LEVEL_INFO = 1
+VERBOS_LEVEL_DEBUG = 2
+
+def get_verbos_level():
+    return 2
+
 def negativeNumber(x):
     neg = float('-' + x)
     return neg
