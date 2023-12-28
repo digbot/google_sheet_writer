@@ -10,6 +10,7 @@ from service.gmail.gmailService import get_gmail_service, get_gmail_cred
 from collections import deque
 import re
 from time import strptime
+import calendar
 
 # Define the scopes that the application will need
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
@@ -27,13 +28,28 @@ def get_first_day_of_a_month_by_gid(gid):
     month = gid.replace(year,'')
     month = strptime(month,'%b').tm_mon
     input_dt = datetime.today()
-    first_day_of_a_month = input_dt.replace(year = int('20' + year), month = int(month), day=1)
+    first_day_of_a_month = input_dt.replace(year = int('20' + year), month = int(month), day=1, hour=0, minute=0, second=0)
     return first_day_of_a_month
+
+def get_last_day_of_a_month_by_gid(gid):
+    year = re.findall(r'\d+', gid)
+    year = str(year[0])
+    month = gid.replace(year,'')
+    month = strptime(month,'%b').tm_mon
+    year = int('20' + year)
+    month = int(month)
+    _, last_day = calendar.monthrange(year, month)
+    input_dt = datetime.today()
+    lastt_day_of_a_month = input_dt.replace(year = year, month = month, day=last_day, hour=23, minute=59, second=59)
+    return lastt_day_of_a_month
 
 def fetch_message(service, search_query, gid):
     first_day_of_a_month = get_first_day_of_a_month_by_gid(gid)
+    last_day_of_a_month = get_last_day_of_a_month_by_gid(gid)
+    print('from: ' + str(first_day_of_a_month) +' to: ' + str(last_day_of_a_month))
     date_after = str(int(first_day_of_a_month.timestamp()))
-    query = "after:" + date_after + ";subject:" + search_query
+    date_before = str(int(last_day_of_a_month.timestamp()))
+    query = "after:" + date_after + ";before:" + date_before +  ";subject:" + search_query
     #query = "subject:" + search_query
     print('fetch_message_Query: ' + query)
     response = service.users().messages().list(userId='me', q=query).execute()
