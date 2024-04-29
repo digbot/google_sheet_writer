@@ -4,10 +4,11 @@ from datetime import datetime
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from helpers.commonHelper import create_line_object, is_subject_ignored, DATE_FORMAT
-from helpers.storeHelper import get_sheet_id, append_to_json_file, get_processed_ids, get_gid, fetch_cache_data, get_subject_from_config
+from helpers.storeHelper import get_sheet_id, append_to_json_file, get_processed_ids, get_gid, fetch_cache_data, get_subject_from_config, get_buffer, get_invest, get_indata
 from service.sheet.sheetService import get_first_empty_row, get_sheet, clear_worksheet
 from service.gmail.gmailService import get_gmail_service, get_gmail_cred
 from collections import deque
+from service.httpClient import send_month_data
 import re
 from time import strptime
 import calendar
@@ -139,6 +140,26 @@ def write_data_into_sheet(sheet_id, git, data):
     if "updatedCells" in result:
         print(f'{result["updatedCells"]} cells updated')
 
+def accumulate_total(array):
+    total = 0
+
+    for sublist in array:
+        try:
+            total += int(sublist[1])
+        except ValueError:
+            pass
+
+    return total
+
+
+def spread_data(sheet_id, git, data):
+    write_data_into_sheet(sheet_id, git, data)
+    total = accumulate_total(data) * -1
+    buffer = get_buffer()
+    invest = get_invest()
+    inData = get_indata()
+    send_month_data(inData, total, buffer, invest)
+
 if __name__ == '__main__':
 
     # Create a new Google Sheet
@@ -171,4 +192,4 @@ if __name__ == '__main__':
     
     print("The msgs_data is: ", data) #printing the array
 
-    write_data_into_sheet(sheet_id, git, data)
+    spread_data(sheet_id, git, data)

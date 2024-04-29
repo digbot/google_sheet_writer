@@ -7,6 +7,9 @@ STORE_FILE = 'config.json'
 MANUAL_ITEMS = 'items'
 MSG_INDEX = 'msg_ids'
 SHEET_INDEX = 'sheet_id'
+BUFFER = 'buffer'
+INVEST = 'invest'
+INDATA = 'indata'
 GID_INDEX = 'gid'
 DATA_FOLDER = 'data/'
 SUBJECT = 'subject'
@@ -40,6 +43,36 @@ def get_sheet_id():
             return sheet_id
     except (FileNotFoundError, json.JSONDecodeError):
         print("Error: get_sheet_id Could not open " + STORE_FILE+ ".json")
+        return False
+
+def get_buffer():
+    try:
+        with open(STORE_FILE) as f:
+            data = json.load(f)
+            buffer = data[BUFFER]
+            return buffer
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("Error: get_sheet_id Could not open " + STORE_FILE +  ".json")
+        return False
+
+def get_invest():
+    try:
+        with open(STORE_FILE) as f:
+            data = json.load(f)
+            invest = data[INVEST]
+            return invest
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("Error: get_sheet_id Could not open " + STORE_FILE +  ".json")
+        return False
+    
+def get_indata():
+    try:
+        with open(STORE_FILE) as f:
+            data = json.load(f)
+            inData = data[INDATA]
+            return inData
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("Error: get_sheet_id Could not open " + STORE_FILE +  ".json")
         return False
 
 def get_subject_from_config():
