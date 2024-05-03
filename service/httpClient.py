@@ -1,5 +1,12 @@
 import requests
-from datetime import datetime
+import datetime
+import calendar
+
+
+def last_day_of_current_month():
+    today = datetime.date.today()
+    last_day = calendar.monthrange(today.year, today.month)[1]
+    return last_day
 
 def send_post_request(url, data):
     try:
@@ -17,10 +24,14 @@ def send_month_data(inData, outData, buffer, invest):
     url = "http://localhost:3000/month"
 
     # Define the JSON data to be sent in the request body
-    current_date = str(datetime.now().strftime("%m.%d.%Y"))
+    last_day = last_day_of_current_month()
+    today = datetime.datetime.now()
+    current_date = str(today.now().strftime("%m.%d.%Y"))
+    items = current_date.split('.')
+    last_day_month = items[0] + '.'+ str(last_day) + '.' + items[2]
 
     json_data = {
-        "date": current_date,
+        "date": last_day_month,
         "in": inData,
         "out": outData,
         "buffer": buffer,
