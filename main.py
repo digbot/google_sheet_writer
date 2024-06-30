@@ -31,7 +31,7 @@ def get_first_day_of_a_month_by_gid(gid):
     input_dt = datetime.today()
     first_day_of_a_month = input_dt.replace(year = int('20' + year), month = int(month), day=1, hour=0, minute=0, second=0)
     return first_day_of_a_month
-
+ 
 def get_last_day_of_a_month_by_gid(gid):
     year = re.findall(r'\d+', gid)
     year = str(year[0])
