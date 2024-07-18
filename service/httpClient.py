@@ -21,7 +21,7 @@ def send_post_request(url, data):
 
 def send_month_data(inData, outData, buffer, invest):
     # Define the URL to send the POST request to
-    url = "http://localhost:3000/month"
+    url = "http://localhost:3007/month"
 
     # Define the JSON data to be sent in the request body
     last_day = last_day_of_current_month()
