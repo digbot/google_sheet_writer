@@ -2,17 +2,7 @@
 import json
 from datetime import datetime
 import codecs
-
-STORE_FILE = 'config.json'
-MANUAL_ITEMS = 'items'
-MSG_INDEX = 'msg_ids'
-SHEET_INDEX = 'sheet_id'
-BUFFER = 'buffer'
-INVEST = 'invest'
-INDATA = 'indata'
-GID_INDEX = 'gid'
-DATA_FOLDER = 'data/'
-SUBJECT = 'subject'
+from constants import STORE_FILE, MANUAL_ITEMS , MSG_INDEX, SHEET_INDEX, BUFFER, INVEST, INDATA, GID_INDEX, DATA_FOLDER, SUBJECT
 
 def store_sheet_and_git_id(sheet_id, sheet_name, git):
     #with open(STORE_FILE, 'w') as f:
