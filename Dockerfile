@@ -1,13 +1,20 @@
 # syntax=docker/dockerfile:1
 
 FROM python:3.8
-# Or any preferred Python version.
 
-ADD requirements.txt /
+# Create app directory
+WORKDIR /usr/src/app
+
+
+# Copy the requirements file to the working directory
+COPY requirements.txt ./
+
+# Upgrade pip and install the Python dependencies
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-ADD main.py /
-CMD [ "python", "./main.py" ]
+# Copy all the application code and other necessary files/folders
+COPY . .
 
-# Or enter the name of your unique directory and parameter set.
+# Command to run the application
+CMD ["python", "api.py"]

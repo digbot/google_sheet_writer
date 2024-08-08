@@ -4,18 +4,10 @@ import os
 import codecs
 from helpers.storeHelper import get_gid, create_cache_path
 from constants import MSG_INDEX
-from dotenv import load_dotenv
-
-# Load the .env file
-load_dotenv()
-
-# Access the environment variables
-database_url = os.getenv('API_URL')
-
 
 app = Flask(__name__)
 
-DATA_FILE = 'test/' + create_cache_path(get_gid())
+DATA_FILE =  create_cache_path(get_gid())
 
 def get_item_list(current_data, MSG_INDEX):
     if isinstance(current_data, dict) and MSG_INDEX in current_data:
