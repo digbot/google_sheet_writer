@@ -4,6 +4,12 @@ import os
 import codecs
 from helpers.storeHelper import get_gid, create_cache_path
 from constants import MSG_INDEX
+from dotenv import load_dotenv
+
+# Load the .env file
+load_dotenv()
+
+debug_mode = os.getenv('DEBUG')
 
 app = Flask(__name__)
 
@@ -95,4 +101,4 @@ def save_data():
 # Run the app
 if __name__ == '__main__':
     print("Run the app")
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=debug_mode)
