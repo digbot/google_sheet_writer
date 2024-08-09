@@ -3,7 +3,7 @@ import json
 import os
 import codecs
 from helpers.storeHelper import get_gid, create_cache_path
-from constants import MSG_INDEX
+from constants import MSG_INDEX, DATA_FOLDER
 from dotenv import load_dotenv
 
 # Load the .env file
@@ -13,7 +13,9 @@ debug_mode = os.getenv('DEBUG')
 
 app = Flask(__name__)
 
-DATA_FILE =  create_cache_path(get_gid())
+DATA_FILE = create_cache_path(get_gid())
+
+print(DATA_FILE)
 
 def get_item_list(current_data, MSG_INDEX):
     if isinstance(current_data, dict) and MSG_INDEX in current_data:
@@ -54,24 +56,25 @@ def set_item_list(current_data, index, new_value):
 
 # Load initial data
 # Define a route for DELETE requests
-@app.route('/api/data', methods=['DELETE'])
-def delete_data():
-    # Logic to delete data
-    # For example, delete an item from a database or a list
-    # Example response
-    return jsonify({"message": "Data deleted successfully"}), 200
+@app.route('/api/data/<int:item_id>', methods=['DELETE'])
+def delete_item(item_id):
+    try:
+    # item_id is extracted from the URL path
+        current_data = get_data()
+        item_list = get_item_list(current_data, MSG_INDEX)
+        print(item_id)
+        print(len(item_list))
+        item_list.pop(item_id-1)
+        output_list_data = set_item_list(current_data, MSG_INDEX, item_list)
+        with open(DATA_FILE, 'w', encoding='utf-8') as file:
+            json.dump(output_list_data, file, ensure_ascii=False, indent=2)
+        return jsonify({
+            'message': f'Item with ID {item_id} has been deleted'
+        }), 200
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("Error: delete_item can't open file:" + DATA_FILE)
+        return False
 
-        #current_data = get_data()
-        #item_list = get_item_list(current_data, MSG_INDEX)
-        #item_list.append(list(new_data.values()))
-        #output_list_data = set_item_list(current_data,MSG_INDEX, item_list)
-        #with open(DATA_FILE, 'w', encoding='utf-8') as file:
-        #    json.dump(output_list_data, file, ensure_ascii=False, indent=2)
-    #return jsonify({"message": "Data saved successfully"}), 200
-    #except (FileNotFoundError, json.JSONDecodeError):
-    #    print("Error: delete_data can't open file:" + DATA_FILE)
-    #    return False
-    
 # Load initial data
 @app.route('/api/data', methods=['GET'])
 def get_data():
@@ -93,7 +96,7 @@ def save_data():
     current_data = get_data()
     item_list = get_item_list(current_data, MSG_INDEX)
     item_list.append(list(new_data.values()))
-    output_list_data = set_item_list(current_data,MSG_INDEX, item_list)
+    output_list_data = set_item_list(current_data, MSG_INDEX, item_list)
     with open(DATA_FILE, 'w', encoding='utf-8') as file:
         json.dump(output_list_data, file, ensure_ascii=False, indent=2)
     return jsonify({"message": "Data saved successfully"}), 200
