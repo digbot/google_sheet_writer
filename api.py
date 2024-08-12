@@ -4,6 +4,7 @@ import os
 import codecs
 from helpers.storeHelper import get_gid, create_cache_path
 from constants import MSG_INDEX, DATA_FOLDER
+import subprocess
 from dotenv import load_dotenv
 
 # Load the .env file
@@ -100,6 +101,17 @@ def save_data():
     with open(DATA_FILE, 'w', encoding='utf-8') as file:
         json.dump(output_list_data, file, ensure_ascii=False, indent=2)
     return jsonify({"message": "Data saved successfully"}), 200
+
+
+# Save data
+@app.route('/api/run', methods=['POST'])
+def run():
+    try:
+       subprocess.run(["python", "main.py"], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Command failed with return code {e.returncode}")
+    return jsonify({"message": "Ran with ok code"}), 200
+
 
 # Run the app
 if __name__ == '__main__':
