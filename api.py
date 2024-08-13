@@ -2,13 +2,20 @@ from flask import Flask, jsonify, request
 import json
 import os
 import codecs
+import subprocess
+import jwt
+from datetime import datetime, timedelta
+from dotenv import load_dotenv
+from functools import wraps
+
 from helpers.storeHelper import get_gid, create_cache_path
 from constants import MSG_INDEX, DATA_FOLDER
-import subprocess
-from dotenv import load_dotenv
 
 # Load the .env file
 load_dotenv()
+
+# Secret key for JWT
+SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'your_secret_key')
 
 debug_mode = os.getenv('DEBUG')
 
@@ -27,17 +34,6 @@ def get_item_list(current_data, MSG_INDEX):
         raise TypeError("Invalid data structure or index type")
 
 def set_item_list(current_data, index, new_value):
-    """
-    Updates the `current_data` with `new_value` at the given `index` or key.
-
-    Parameters:
-    - current_data (dict or list): The data structure to update.
-    - index (str or int): The key (if `current_data` is a dict) or index (if `current_data` is a list).
-    - new_value: The new value to set at the specified `index` or key.
-
-    Returns:
-    - Updated `current_data`.
-    """
     if isinstance(current_data, dict):
         if not isinstance(index, str):
             raise TypeError("Index must be a string for a dictionary.")
@@ -55,12 +51,40 @@ def set_item_list(current_data, index, new_value):
 
     return current_data
 
-# Load initial data
+# JWT token required decorator
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        # Check for token in the Authorization header
+        if 'Authorization' in request.headers:
+            token = request.headers['Authorization'].split(" ")[1]
+        if not token:
+            return jsonify({'message': 'Token is missing!'}), 401
+        try:
+            # Decode the token
+            data = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            return jsonify({'message': 'Token has expired!'}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({'message': 'Token is invalid!'}), 401
+        return f(*args, **kwargs)
+    return decorated
+
+# Route to generate token (for testing purposes)
+@app.route('/api/token', methods=['GET'])
+def generate_token():
+    token = jwt.encode({
+        'sub': 'user123',
+        'exp': datetime.utcnow() + timedelta(minutes=30)
+    }, SECRET_KEY, algorithm="HS256")
+    return jsonify({'token': token})
+
 # Define a route for DELETE requests
 @app.route('/api/data/<int:item_id>', methods=['DELETE'])
+@token_required
 def delete_item(item_id):
     try:
-    # item_id is extracted from the URL path
         current_data = get_data()
         item_list = get_item_list(current_data, MSG_INDEX)
         print(item_id)
@@ -74,24 +98,28 @@ def delete_item(item_id):
         }), 200
     except (FileNotFoundError, json.JSONDecodeError):
         print("Error: delete_item can't open file:" + DATA_FILE)
-        return False
+        return jsonify({'message': 'Internal Server Error'}), 500
+    except IndexError:
+        return jsonify({'message': 'Item not found'}), 404
 
 # Load initial data
 @app.route('/api/data', methods=['GET'])
+@token_required
 def get_data():
     try:
         with codecs.open(DATA_FILE, "r", "utf-8") as f:
             data = json.load(f)
             if MSG_INDEX in data:
-              return data
-            else: 
-                return []
+                return data
+            else:
+                return jsonify([]), 200
     except (FileNotFoundError, json.JSONDecodeError):
         print("Error: fetch_manule_data can't open file:" + DATA_FILE)
-        return False
+        return jsonify({'message': 'Internal Server Error'}), 500
 
 # Save data
 @app.route('/api/data', methods=['POST'])
+@token_required
 def save_data():
     new_data = request.json
     current_data = get_data()
@@ -102,16 +130,16 @@ def save_data():
         json.dump(output_list_data, file, ensure_ascii=False, indent=2)
     return jsonify({"message": "Data saved successfully"}), 200
 
-
-# Save data
+# Run script
 @app.route('/api/run', methods=['POST'])
+@token_required
 def run():
     try:
-       subprocess.run(["python", "main.py"], check=True)
+        subprocess.run(["python", "main.py"], check=True)
     except subprocess.CalledProcessError as e:
         print(f"Command failed with return code {e.returncode}")
+        return jsonify({"message": "Script execution failed"}), 500
     return jsonify({"message": "Ran with ok code"}), 200
-
 
 # Run the app
 if __name__ == '__main__':
