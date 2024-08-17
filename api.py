@@ -82,7 +82,6 @@ def generate_token():
 
 # Define a route for DELETE requests
 @app.route('/api/data/<int:item_id>', methods=['DELETE'])
-@token_required
 def delete_item(item_id):
     try:
         current_data = get_data()
@@ -104,7 +103,6 @@ def delete_item(item_id):
 
 # Load initial data
 @app.route('/api/data', methods=['GET'])
-@token_required
 def get_data():
     try:
         with codecs.open(DATA_FILE, "r", "utf-8") as f:
@@ -119,7 +117,6 @@ def get_data():
 
 # Save data
 @app.route('/api/data', methods=['POST'])
-@token_required
 def save_data():
     new_data = request.json
     current_data = get_data()
@@ -132,7 +129,6 @@ def save_data():
 
 # Run script
 @app.route('/api/run', methods=['POST'])
-@token_required
 def run():
     try:
         subprocess.run(["python", "main.py"], check=True)
