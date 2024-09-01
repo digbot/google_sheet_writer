@@ -7,7 +7,7 @@ import jwt
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from functools import wraps
-#from flask_cors import CORS
+from flask_cors import CORS
 
 from helpers.storeHelper import get_gid, create_cache_path
 from constants import MSG_INDEX, DATA_FOLDER
@@ -21,7 +21,7 @@ SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'your_secret_key')
 debug_mode = os.getenv('DEBUG')
 
 app = Flask(__name__)
-#CORS(app)  # This will allow all origins; you can configure it further if needed
+CORS(app)  # This will allow all origins; you can configure it further if needed
 
 DATA_FILE = create_cache_path(get_gid())
 
