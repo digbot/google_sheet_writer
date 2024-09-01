@@ -11,8 +11,8 @@ COPY requirements.txt ./
 
 # Upgrade pip and install the Python dependencies
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
 RUN pip install flask-cors
+RUN pip install -r requirements.txt
 
 # Copy all the application code and other necessary files/folders
 COPY . .
