@@ -7,3 +7,4 @@ manual.json
 *.pyc
 data/*.json
 data/test/*.json
+node_modules/*

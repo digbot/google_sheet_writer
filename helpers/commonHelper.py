@@ -24,11 +24,7 @@ def convert_to_date(date_time_str):
     return date_str
 
 def is_subject_ignored(subject):
-    find = subject.find('pogashenie') != -1
-    if find:
-        return True
-    else:
-        return False
+    return 'pogashenie' in subject or 'neuspeshen' in subject
 
 def create_line_object(text, id):
     # Regular expression to match BGN numbers
