@@ -4,11 +4,11 @@ from datetime import datetime
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from helpers.commonHelper import create_line_object, is_subject_ignored, DATE_FORMAT
-from helpers.storeHelper import get_sheet_id, append_to_json_file, get_processed_ids, get_gid, fetch_cache_data, get_subject_from_config, get_buffer, get_invest, get_indata
+from helpers.storeHelper import get_sheet_id, get_gid, get_subject_from_config, get_buffer, get_invest, get_indata
 from service.sheet.sheetService import get_first_empty_row, get_sheet, clear_worksheet
 from service.gmail.gmailService import get_gmail_service, get_gmail_cred
 from collections import deque
-from service.httpClient import send_month_data
+from service.httpClient import send_month_data, send_day_data, get_day_data, get_full_day_data
 import re
 from time import strptime
 import calendar
@@ -91,10 +91,10 @@ def search_messages(search_query, processed_ids, git):
                 continue
 
             line = create_line_object(subject, msg_id)
-            
             is_msg_processed = msg_id not in processed_ids
             if line and is_msg_processed:
                 data.append(line)
+                send_day_data(line, deque(line).pop())
                 print('Added: ' + subject)
             else:
                 print('Bypass: ' + subject)
@@ -102,8 +102,9 @@ def search_messages(search_query, processed_ids, git):
                 last_elem = deque(line).pop()
                 msg_ids.append(last_elem)
           
-        append_to_json_file(msg_ids, git)
-
+#        append_to_json_file(msg_ids, git)
+         #   for hash in msg_ids:
+         #       (hash)
         return data
 
     except HttpError as error:
@@ -151,7 +152,6 @@ def accumulate_total(array):
 
     return total
 
-
 def spread_data(sheet_id, git, data):
     write_data_into_sheet(sheet_id, git, data)
     total = accumulate_total(data) * -1
@@ -173,7 +173,7 @@ if __name__ == '__main__':
 
     git = get_gid()
 
-    processed_ids = get_processed_ids(git)
+    processed_ids = get_day_data()
     
     sheet = get_sheet(sheet_id, git, sheets_service, client)
 
@@ -186,10 +186,8 @@ if __name__ == '__main__':
 
     msgs_data = search_messages(subject, processed_ids, git)
     
-    cache_data = fetch_cache_data(git)
+    data = get_full_day_data()
 
-    data = add_item(msgs_data, cache_data)
-    
-    print("The msgs_data is: ", data) #printing the array
+    print("The data dunmp is: ", data) #printing the array
 
     spread_data(sheet_id, git, data)

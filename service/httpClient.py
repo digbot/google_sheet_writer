@@ -2,11 +2,50 @@ import requests
 import datetime
 import calendar
 
+def send_day_data(line, hash):
+      # Define the URL to send the POST request to
+    url = "http://localhost:3007/day"
+
+    json_data = {
+        "date": line[0], 
+        "value": line[1],
+        "comment": line[2],
+        "note": line[3],
+        "hash": hash
+    }
+    return send_post_request(url, json_data)
+
+def get_day_data():
+      # Define the URL to send the POST request to
+    url = "http://localhost:3007/day/byMonth"
+    response = do_get_request(url)
+    day_data_item = response
+    return list(map(lambda x: {"hash": x["hash"]}, day_data_item))
+
+
+def get_full_day_data():
+      # Define the URL to send the POST request to
+    url = "http://localhost:3007/day/byMonth"
+    response = do_get_request(url)
+    output_data = [
+        [item['date'], item['value'], item['comment'], item['note'], item['hash']]
+        for item in response
+    ]
+    return output_data
 
 def last_day_of_current_month():
     today = datetime.date.today()
     last_day = calendar.monthrange(today.year, today.month)[1]
     return last_day
+
+def do_get_request(url):
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Raise an exception for 4xx and 5xx status codes
+        print("GET request sent successfully: ")
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error sending POST request: {e}")
 
 def send_post_request(url, data):
     try:
