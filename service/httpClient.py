@@ -33,6 +33,12 @@ def get_full_day_data():
     ]
     return output_data
 
+def get_total_day_data():
+      # Define the URL to send the POST request to
+    url = "http://localhost:3007/day/byMonth"
+    response = do_get_request(url)
+    return abs(float(response[0]['totalValue']))
+
 def last_day_of_current_month():
     today = datetime.date.today()
     last_day = calendar.monthrange(today.year, today.month)[1]

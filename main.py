@@ -8,7 +8,7 @@ from helpers.storeHelper import get_sheet_id, get_gid, get_subject_from_config, 
 from service.sheet.sheetService import get_first_empty_row, get_sheet, clear_worksheet
 from service.gmail.gmailService import get_gmail_service, get_gmail_cred
 from collections import deque
-from service.httpClient import send_month_data, send_day_data, get_day_data, get_full_day_data
+from service.httpClient import send_month_data, send_day_data, get_day_data, get_full_day_data, get_total_day_data
 import re
 from time import strptime
 import calendar
@@ -152,13 +152,12 @@ def accumulate_total(array):
 
     return total
 
-def spread_data(sheet_id, git, data):
+def spread_data(sheet_id, git, data, total_data):
     write_data_into_sheet(sheet_id, git, data)
-    total = accumulate_total(data) * -1
     buffer = get_buffer()
     invest = get_invest()
     inData = get_indata()
-    send_month_data(inData, total, buffer, invest)
+    send_month_data(inData, total_data, buffer, invest)
 
 if __name__ == '__main__':
 
@@ -188,6 +187,8 @@ if __name__ == '__main__':
     
     data = get_full_day_data()
 
+    total_data = get_total_day_data()
+
     print("The data dunmp is: ", data) #printing the array
 
-    spread_data(sheet_id, git, data)
+    spread_data(sheet_id, git, data, total_data)
