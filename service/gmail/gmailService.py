@@ -6,6 +6,7 @@ from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
+
 # Define the scopes that the application will need
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
           'https://www.googleapis.com/auth/drive',
@@ -43,10 +44,20 @@ def get_gmail_cred():
     if os.path.exists('token.pickle'):
         with open('token.pickle', 'rb') as token:
             creds = pickle.load(token)
+    
+    #flow = InstalledAppFlow.from_client_secrets_file(
+    #'credentials.json', SCOPES)
     # If there are no (valid) credentials available, let the user log in
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
+            #auth_uri = flow.step1_get_authorize_url() # Redirect the user to auth_uri
+            #print("Go to the following link in your browser: " + auth_uri)
+            #code = raw_input('Enter verification code: ').strip()
+            #step 2
+            #credentials = flow.step2_exchange(code)
+            
             creds.refresh(Request())
+            #print("Please update credentials at this URL:", Request() )
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
                 'credentials.json', SCOPES)

@@ -37,6 +37,11 @@ def get_total_day_data():
       # Define the URL to send the POST request to
     url = "http://localhost:3007/day/byMonth"
     response = do_get_request(url)
+        
+    # Check if the response is valid and not empty
+    if not response or not isinstance(response, list) or 'totalValue' not in response[0]:
+        return 0
+    
     return abs(float(response[0]['totalValue']))
 
 def last_day_of_current_month():
