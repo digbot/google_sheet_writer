@@ -12,6 +12,8 @@ from service.httpClient import send_month_data, send_day_data, get_day_data, get
 import re
 from time import strptime
 import calendar
+import time
+import hashlib
 
 # Define the scopes that the application will need
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
@@ -101,10 +103,6 @@ def search_messages(search_query, processed_ids, git):
             if line:
                 last_elem = deque(line).pop()
                 msg_ids.append(last_elem)
-          
-#        append_to_json_file(msg_ids, git)
-         #   for hash in msg_ids:
-         #       (hash)
         return data
 
     except HttpError as error:
@@ -118,7 +116,11 @@ def add_item(data, cache_data):
         for cache_item in cache_data:
             key = cache_item[0]
             cache_item_str = '_'.join(cache_item)
-            cache_item.append(str(key) + '_' + str(hash(cache_item_str)))
+            # Get the current timestamp
+            timestamp = str(int(time.time()))
+            # Combine the cache item string with the timestamp
+            cache_item_with_timestamp = f"{cache_item_str}_{timestamp}"
+            cache_item.append(str(key) + '_' + str(hash(cache_item_with_timestamp)))
             data.append(cache_item)
     return data
 
