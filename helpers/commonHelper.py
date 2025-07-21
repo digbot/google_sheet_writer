@@ -33,7 +33,8 @@ def create_line_object(text, id):
     
     # Regular expression to match BGN numbers
     #bgn_pattern = r"\b\d+(?:\.\d{1,2})?\s*BGN\b"
-    euro_pattern = r"\b(\d+(?:\.\d{1,2})?)\s*EUR\b"
+    #euro_pattern = r"\b(\d+(?:\.\d{1,2})?)\s*EUR\b"
+    euro_pattern = r'\((\d+\.\d+)\s*EUR\)'
 
     # Regular expression to match USD numbers
     #bgn_pattern = r"\b\d+(?:\.\d{1,2})?\s*USD\b"
@@ -56,11 +57,19 @@ def create_line_object(text, id):
     # Find all dates in the text
     date_matches = re.findall(date_pattern, text)
 
+    #$if not eur_matches or usd_matches:
+    #   raise ValueError("No EUR value found in text")
+
     # if we just load we don't need this data
     if (len(eur_matches)):
         bgn_matches.clear()
-        items = re.findall(r'\d+\.\d+', (eur_matches[0] + eur_matches[0]))
-        bgn_matches.append(items[0])
+        first_eur_value = float(eur_matches[0])
+
+        # Multiply by the exchange rate
+        exchange_rate = 1.95583
+        result = first_eur_value * exchange_rate
+        #items = re.findall(r'\d+\.\d+', (eur_matches[0] + eur_matches[0]))
+        bgn_matches.append(str(result))
 
     if (len(usd_matches)):
         bgn_matches.clear()
