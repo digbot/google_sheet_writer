@@ -4,9 +4,10 @@ from datetime import datetime
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from helpers.commonHelper import create_line_object, is_subject_ignored, DATE_FORMAT
-from helpers.storeHelper import get_sheet_id, get_gid, get_subject_from_config, get_buffer, get_invest, get_indata
+from helpers.storeHelper import get_sheet_id, get_gid, get_subject_from_config, get_buffer, get_invest, get_indata, get_mode
 from service.sheet.sheetService import get_first_empty_row, get_sheet, clear_worksheet
 from service.gmail.gmailService import get_gmail_service, get_gmail_cred
+from service.googlepay.googlePayService import get_wallet_data
 from collections import deque
 from service.httpClient import send_month_data, send_day_data, get_day_data, get_full_day_data, get_total_day_data
 import re
@@ -124,7 +125,7 @@ def add_item(data, cache_data):
             data.append(cache_item)
     return data
 
-def write_data_into_sheet(sheet_id, git, data):
+def write_data_into_sheet(sheets_service, sheet_id, git, data):
     print("The msgs_data is: ", data) #printing the array
 
     data = process_main_data(data)
@@ -154,14 +155,41 @@ def accumulate_total(array):
 
     return total
 
-def spread_data(sheet_id, git, data, total_data):
-    write_data_into_sheet(sheet_id, git, data)
+def spread_data(sheets_service, sheet_id, git, data, total_data):
+    write_data_into_sheet(sheets_service, sheet_id, git, data)
     buffer = get_buffer()
     invest = get_invest()
     inData = get_indata()
     send_month_data(inData, total_data, buffer, invest)
 
-if __name__ == '__main__':
+
+def run_in_dev_mode():
+    print("RUN IN DEV MODE")
+
+    # Create a new Google Sheet
+    creds = get_gmail_cred()
+
+    # Build the Gmail API service
+    sheets_service = build('sheets', 'v4', credentials=creds)
+    client = gspread.authorize(creds)
+
+    sheet_id = get_sheet_id()
+
+    git = get_gid()
+
+    processed_ids = get_day_data()
+    
+    sheet = get_sheet(sheet_id, git, sheets_service, client)
+
+    clear_worksheet(sheets_service, sheet_id, git)
+
+    first_empty_row = get_first_empty_row(sheets_service, sheet_id, git)
+    print(f'{first_empty_row} first_empty_row')
+
+    get_wallet_data()
+
+def run_in_prod_mode():
+    print("!!! RUN IN PROD MODE !!")
 
     # Create a new Google Sheet
     creds = get_gmail_cred()
@@ -185,7 +213,7 @@ if __name__ == '__main__':
 
     subject = get_subject_from_config()
 
-    msgs_data = search_messages(subject, processed_ids, git)
+    search_messages(subject, processed_ids, git)
     
     data = get_full_day_data()
 
@@ -193,4 +221,12 @@ if __name__ == '__main__':
 
     print("The data dunmp is: ", data) #printing the array
 
-    spread_data(sheet_id, git, data, total_data)
+    spread_data(sheets_service, sheet_id, git, data, total_data)
+
+
+if __name__ == '__main__':
+
+    if get_mode() == 'prod':
+        run_in_prod_mode()
+    else:
+        run_in_dev_mode()

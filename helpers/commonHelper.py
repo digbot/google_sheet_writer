@@ -29,7 +29,7 @@ def is_subject_ignored(subject):
 def create_line_object(text, id):
     # Regular expression to match BGN numbers
     #bgn_pattern = r"\b\d+(?:\.\d{1,2})?\s*BGN\b"
-    bgn_pattern = r"\b(\d+(?:\.\d{1,2})?)\s*BGN\b"
+    bgn_pattern = r'POKUPKA\s+(\d+\.\d+)'
     
     # Regular expression to match BGN numbers
     #bgn_pattern = r"\b\d+(?:\.\d{1,2})?\s*BGN\b"

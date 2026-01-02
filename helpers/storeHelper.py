@@ -1,14 +1,23 @@
 
 import json
 from datetime import datetime
-import codecs
-from constants import STORE_FILE, MANUAL_ITEMS , MSG_INDEX, SHEET_INDEX, BUFFER, INVEST, INDATA, GID_INDEX, DATA_FOLDER, SUBJECT
+from constants import STORE_FILE, MODE, MSG_INDEX, SHEET_INDEX, BUFFER, INVEST, INDATA, GID_INDEX, SUBJECT
 
 def store_sheet_and_git_id(sheet_id, sheet_name, git):
     #with open(STORE_FILE, 'w') as f:
     #    json.dump({SHEET_INDEX: sheet_id, GID_INDEX: sheet_name }, f)
     with open(create_gmail_path(git), 'w') as f:
         json.dump({MSG_INDEX: [] }, f)
+
+def get_mode():
+    try:
+        with open(STORE_FILE) as f:
+            data = json.load(f)
+            sheet_id = data[MODE]
+            return sheet_id
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("Error: mode Could not open " + STORE_FILE + ".json")
+        return False
 
 def get_gid():
     try:
@@ -32,7 +41,7 @@ def get_sheet_id():
             sheet_id = data[SHEET_INDEX]
             return sheet_id
     except (FileNotFoundError, json.JSONDecodeError):
-        print("Error: get_sheet_id Could not open " + STORE_FILE+ ".json")
+        print("Error: get_sheet_id Could not open " + STORE_FILE + ".json")
         return False
 
 def get_buffer():
@@ -72,5 +81,5 @@ def get_subject_from_config():
             subject = data[SUBJECT]
             return subject
     except (FileNotFoundError, json.JSONDecodeError):
-        print("Error: get_subject_from_config Could not open " + STORE_FILE+ ".json")
+        print("Error: get_subject_from_config Could not open " + STORE_FILE + ".json")
         return False

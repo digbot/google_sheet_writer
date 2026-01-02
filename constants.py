@@ -7,4 +7,5 @@ INVEST = 'invest'
 INDATA = 'indata'
 GID_INDEX = 'gid'
 DATA_FOLDER = 'data/'
+MODE = 'mode' # dev or prod
 SUBJECT = 'subject'
