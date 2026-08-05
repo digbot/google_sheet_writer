@@ -215,6 +215,7 @@ def run_in_prod_mode():
 
     search_messages(subject, processed_ids, git)
     
+    # Pulls the full set of parsed transactions for the current day
     data = get_full_day_data()
 
     total_data = get_total_day_data()
